@@ -1,11 +1,11 @@
 [ {
-  "id" : "6cc7e564-8c27-4b7f-a021-67cc3cd672e1",
+  "id" : "5ff59d0c-cae6-4592-9e3a-226f19a2db12",
   "name" : "isac",
   "url" : "https://push.borni.top/isac",
   "authRequired" : true,
   "token" : "tk_bKtcSTBqn7P9BcJKaEhHnBEK3A8hE"
 }, {
-  "id" : "0e6f1255-83e5-4690-b591-fce2524a0a96",
+  "id" : "e3627962-90bc-43a8-9208-9c1670e01bc0",
   "name" : "valami",
   "url" : "valami.hu",
   "authRequired" : false,
