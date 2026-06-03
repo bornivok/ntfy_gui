@@ -1,0 +1,1 @@
+# Ntfy GUI
