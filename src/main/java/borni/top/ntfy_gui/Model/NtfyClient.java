@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.io.IOException;
 import java.net.ConnectException;
@@ -12,6 +13,7 @@ import java.net.UnknownHostException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Base64;
 
 public class NtfyClient {
 
@@ -33,10 +35,12 @@ public class NtfyClient {
         }
 
         try {
+            String encodedTitle = "=?UTF-8?B?" + Base64.getEncoder().encodeToString(title.getBytes(StandardCharsets.UTF_8)) + "?=";
+
             HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
                     .uri(URI.create(urlString))
-                    .header("Title", title)
-                    .POST(HttpRequest.BodyPublishers.ofString(message));
+                    .header("Title", encodedTitle)
+                    .POST(HttpRequest.BodyPublishers.ofString(message, StandardCharsets.UTF_8));
 
             if (tag != null && !tag.trim().isEmpty() && !tag.equalsIgnoreCase("empty")) {
                 requestBuilder.header("Tag", tag);
@@ -67,9 +71,10 @@ public class NtfyClient {
                     }
                 }
 
-                else if (jsonNode.has("id") && jsonNode.has("title")) {
+                else if (jsonNode.has("id") && jsonNode.has("title") &&  jsonNode.has("message")) {
                     String receivedTitle = jsonNode.get("title").asText();
-                    if (receivedTitle.equals(title)) {
+                    String receivedMessage = jsonNode.get("message").asText();
+                    if (receivedTitle.equals(title) && receivedMessage.equals(message)) {
                         return new NtfyResponse(NtfyResponse.Status.SUCCESS, responseBody);
                     }
                 }
