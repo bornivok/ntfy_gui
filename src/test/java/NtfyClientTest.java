@@ -28,7 +28,7 @@ class NtfyClientTest {
         assertEquals(NtfyResponse.Status.SUCCESS, response.status(),
                 "A publikus szerverre küldött üzenetnek sikeresnek kell lennie.");
         assertNotNull(response.rawBody());
-        assertTrue(response.rawBody().contains("\"topic\":\"szoft_test_channel\""), "A válasznak tartalmaznia kell a csatorna nevét.");
+        assertTrue(response.rawBody().contains("\"topic\":\"szoft_test_channel\",\"title\":\"Teszt header\",\"message\":\"Ez egy automata JUnit teszt üzenet.\""), "A válasznak tartalmaznia kell a csatorna nevét, fejlécet, üzenetet.");
     }
 
     @Test
@@ -68,6 +68,6 @@ class NtfyClientTest {
         );
 
         assertEquals(NtfyResponse.Status.INVALID_REQUEST, response.status(),
-                "Csatorna nélküli URL esetén INVALID_REQUEST státuszt kell kani.");
+                "Csatorna nélküli URL esetén INVALID_REQUEST státuszt kell kapni.");
     }
 }
