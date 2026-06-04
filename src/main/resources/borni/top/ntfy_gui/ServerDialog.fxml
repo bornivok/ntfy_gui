@@ -8,15 +8,15 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox spacing="10.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="borni.top.ntfy_gui.Controller.ServerDialogController">
+<VBox spacing="10.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="borni.top.ntfy_gui.Controller.ServerDialogController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
 
-    <Label text="Szerver megnevezése (pl. Saját NAS):" />
+    <Label text="Szerver megnevezése:" />
     <TextField fx:id="nameField" promptText="Név..." />
 
-    <Label text="Szerver URL (pl. ntfy.sh/backups):" />
+    <Label text="Szerver URL:" />
     <TextField fx:id="urlField" promptText="https://..." />
 
     <CheckBox fx:id="authCheckBox" text="Hitelesítés szükséges" />
@@ -24,17 +24,17 @@
     <Label text="API Token (csak ha hitelesítés szükséges):" />
     <TextField fx:id="tokenField" promptText="tk_..." />
 
-    <HBox spacing="10.0" alignment="CENTER_RIGHT">
+    <HBox alignment="CENTER_RIGHT" spacing="10.0">
         <padding>
             <Insets top="15.0" />
         </padding>
         <!-- A törlés gomb alapból piros lesz a stílus miatt -->
-        <Button fx:id="deleteButton" onAction="#onDeleteClicked" text="Törlés" style="-fx-text-fill: red;" />
+        <Button fx:id="deleteButton" onAction="#onDeleteClicked" style="-fx-text-fill: red;" text="Törlés" />
 
         <!-- Üres helykitöltő (spacer) a gombok közé -->
         <HBox HBox.hgrow="ALWAYS" />
 
-        <Button text="Mégse" onAction="#onCancelClicked" />
-        <Button fx:id="saveButton" onAction="#onSaveClicked" text="Mentés" style="-fx-font-weight: bold;" />
+        <Button onAction="#onCancelClicked" text="Mégse" />
+        <Button fx:id="saveButton" onAction="#onSaveClicked" style="-fx-font-weight: bold;" text="Mentés" />
     </HBox>
 </VBox>
