@@ -50,7 +50,8 @@ public class ServerDialogController {
                 tokenField.setText(server.getToken());
             }
         } else {
-            deleteButton.setDisable(false);
+            deleteButton.setVisible(false);
+            deleteButton.setManaged(false);
         }
     }
 
