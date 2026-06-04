@@ -110,5 +110,5 @@ buildNumber.properties
 
 # End of https://www.toptal.com/developers/gitignore/api/maven,intellij+all
 
-# Servers database
+# Servers database (saved servers)
 servers.json
