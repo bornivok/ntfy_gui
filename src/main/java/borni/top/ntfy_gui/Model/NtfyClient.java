@@ -57,14 +57,21 @@ public class NtfyClient {
             try {
                 JsonNode jsonNode = objectMapper.readTree(responseBody);
 
-                if (jsonNode.has("error")) {
-                    String errorText = jsonNode.get("error").asText().toLowerCase();
+                if (jsonNode.has("code") && jsonNode.has("http") && jsonNode.has("error")) {
+                    int code = jsonNode.get("code").asInt();
+                    int http = jsonNode.get("http").asInt();
+                    String error = jsonNode.get("error").asText();
 
-                    if (errorText.contains("unauthorized")) {
+                    if (code == 40101 && http == 401 && error.equals("unauthorized")) {
                         return new NtfyResponse(NtfyResponse.Status.UNAUTHORIZED, responseBody);
-                    } else if (errorText.contains("invalid request")) {
+                    }
+                    else if (code == 40301 && http == 403 && error.equals("forbidden")) {
+                        return new NtfyResponse(NtfyResponse.Status.FORBIDDEN, responseBody);
+                    }
+                    else if (code == 40024 && http == 400 && error.equals("invalid request: request body must be valid JSON")) {
                         return new NtfyResponse(NtfyResponse.Status.INVALID_REQUEST, responseBody);
-                    } else {
+                    }
+                    else {
                         return new NtfyResponse(NtfyResponse.Status.UNKNOWN_ERROR, responseBody);
                     }
                 } else if (jsonNode.has("id") && jsonNode.has("title") &&  jsonNode.has("message")) {

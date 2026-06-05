@@ -95,7 +95,11 @@ public class MainController {
             }
             case UNAUTHORIZED -> {
                 alert.setAlertType(Alert.AlertType.ERROR);
-                alert.setContentText("Azonosítási hiba");
+                alert.setContentText("API token nem megfelelő");
+            }
+            case FORBIDDEN -> {
+                alert.setAlertType(Alert.AlertType.ERROR);
+                alert.setContentText("API token megadása szükséges");
             }
             case INVALID_REQUEST ->  {
                 alert.setAlertType(Alert.AlertType.ERROR);
