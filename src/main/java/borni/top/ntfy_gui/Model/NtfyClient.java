@@ -35,23 +35,21 @@ public class NtfyClient {
         }
 
         try {
-            String encodedTitle = "=?UTF-8?B?" + Base64.getEncoder().encodeToString(title.getBytes(StandardCharsets.UTF_8)) + "?=";
+            HttpResponse<String> response;
+            try {
+                HttpRequest request = createRequest(urlString, server, title, message, tag);
+                response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            } catch (IOException e) {
+                if (urlString.startsWith("https://")) {
+                    System.out.println("HTTPS hiba, próbálkozás HTTP-vel ... (" +e.getMessage() + ")");
+                    String fallbackUrl = urlString.replaceFirst("https://", "http://");
+                    HttpRequest fallbackRequest = createRequest(fallbackUrl, server, title, message, tag);
 
-            HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
-                    .uri(URI.create(urlString))
-                    .header("Title", encodedTitle)
-                    .POST(HttpRequest.BodyPublishers.ofString(message, StandardCharsets.UTF_8));
-
-            if (tag != null && !tag.trim().isEmpty() && !tag.equalsIgnoreCase("empty")) {
-                requestBuilder.header("Tag", tag);
+                    response = httpClient.send(fallbackRequest, HttpResponse.BodyHandlers.ofString());
+                } else {
+                    throw e;
+                }
             }
-
-            if (server.isAuthRequired() && server.getToken() != null && !server.getToken().isEmpty()) {
-                requestBuilder.header("Authorization", "Bearer " + server.getToken());
-            }
-
-            HttpRequest request = requestBuilder.build();
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
             int statusCode = response.statusCode();
             String responseBody = response.body();
@@ -69,9 +67,7 @@ public class NtfyClient {
                     } else {
                         return new NtfyResponse(NtfyResponse.Status.UNKNOWN_ERROR, responseBody);
                     }
-                }
-
-                else if (jsonNode.has("id") && jsonNode.has("title") &&  jsonNode.has("message")) {
+                } else if (jsonNode.has("id") && jsonNode.has("title") &&  jsonNode.has("message")) {
                     String receivedTitle = jsonNode.get("title").asText();
                     String receivedMessage = jsonNode.get("message").asText();
                     if (receivedTitle.equals(title) && receivedMessage.equals(message)) {
@@ -91,5 +87,24 @@ public class NtfyClient {
         } catch (IOException | InterruptedException e) {
             return new NtfyResponse(NtfyResponse.Status.UNKNOWN_ERROR, e.getMessage());
         }
+    }
+
+    private HttpRequest createRequest(String targetUrl, ServerConfig server, String title, String message, String tag) {
+
+        String encodedTitle = "=?UTF-8?B?" + Base64.getEncoder().encodeToString(title.getBytes(StandardCharsets.UTF_8)) + "?=";
+
+        HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
+                .uri(URI.create(targetUrl))
+                .header("Title", encodedTitle)
+                .POST(HttpRequest.BodyPublishers.ofString(message, StandardCharsets.UTF_8));
+
+        if (tag != null && !tag.trim().isEmpty() && !tag.equalsIgnoreCase("empty")) {
+            requestBuilder.header("Tags", tag);
+        }
+
+        if (server.isAuthRequired() && server.getToken() != null && !server.getToken().isEmpty()) {
+            requestBuilder.header("Authorization", "Bearer " + server.getToken());
+        }
+        return requestBuilder.build();
     }
 }
